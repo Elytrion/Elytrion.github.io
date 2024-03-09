@@ -28,7 +28,7 @@ var render = Render.create({
 // var boxA = Bodies.rectangle(400, 200, 80, 80);
 // var boxB = Bodies.rectangle(450, 50, 80, 80);
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10; i++) {
   let circle = Bodies.circle(i, 10, 30, {
     friction: 0.3,
     frictionAir: 0.00001,

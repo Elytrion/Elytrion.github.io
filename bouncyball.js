@@ -76,8 +76,8 @@ window.addEventListener('resize', function() {
     const relativeVelocityX = ball.velocity.x / window.innerWidth;
     const relativeVelocityY = ball.velocity.y / window.innerHeight;
 
-    render.canvas.width = window.innerWidth;
-    render.canvas.height = window.innerHeight;
+    // render.canvas.width = window.innerWidth;
+    // render.canvas.height = window.innerHeight;
 
     // Update the walls to match the new canvas size
     updateWalls();
@@ -98,10 +98,10 @@ window.addEventListener('resize', function() {
     createBall(scaledPosition, scaledVelocity);
 
     // Ensure the renderer considers the new dimensions
-    Render.lookAt(render, {
-        min: { x: 0, y: 0 },
-        max: { x: window.innerWidth, y: window.innerHeight }
-    });
+    // Render.lookAt(render, {
+    //     min: { x: 0, y: 0 },
+    //     max: { x: window.innerWidth, y: window.innerHeight }
+    // });
    
     // Update mouse bounds to match the new canvas size
     mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);

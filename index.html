@@ -1,7 +1,92 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Elytrion's Sandbox</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
 <body>
-<h1>Elytrion's Website</h1>
+
+<h1>Elytrion's Sandbox</h1>
 <p>Hello! This is a work in progress</p>
+
+<div id="canvas-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/matter-js"></script>
+<script>
+    // Set up the engine, renderer, and world
+    var Engine = Matter.Engine,
+        Render = Matter.Render,
+        World = Matter.World,
+        Bodies = Matter.Bodies,
+        Mouse = Matter.Mouse,
+        MouseConstraint = Matter.MouseConstraint;
+
+    var engine = Engine.create(),
+        world = engine.world;
+
+    var render = Render.create({
+        element: document.getElementById('canvas-container'),
+        engine: engine,
+        options: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            wireframes: false // Set to false to see the shapes with their filled colors
+        }
+    });
+
+    // Create a circle
+    var circle = Bodies.circle(400, 200, 30, { restitution: 0.9 });
+
+    // Add the circle to the world
+    World.add(world, [circle]);
+
+    // Add walls to the world
+    var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+    var leftWall = Bodies.rectangle(0, 300, 60, 600, { isStatic: true });
+    var rightWall = Bodies.rectangle(800, 300, 60, 600, { isStatic: true });
+    var ceiling = Bodies.rectangle(400, 0, 810, 60, { isStatic: true });
+
+    World.add(world, [ground, leftWall, rightWall, ceiling]);
+
+    // Add mouse control
+    var mouse = Mouse.create(render.canvas),
+        mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: false
+                }
+            }
+        });
+
+    World.add(world, mouseConstraint);
+
+    // Keep the mouse in sync with rendering
+    render.mouse = mouse;
+
+    // Run the engine and renderer
+    Engine.run(engine);
+    Render.run(render);
+
+    // Resize canvas on window resize
+    window.addEventListener('resize', function() {
+        render.canvas.width = window.innerWidth;
+        render.canvas.height = window.innerHeight;
+        render.options.width = window.innerWidth;
+        render.options.height = window.innerHeight;
+    });
+</script>
+
 </body>
 </html>

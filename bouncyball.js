@@ -1,4 +1,4 @@
-const { Engine, Render, Bodies, World, Mouse, MouseConstraint, Body } = Matter;
+const { Engine, Render, Bodies, World, Mouse, MouseConstraint, Body = Matter.Body } = Matter;
 
 
 let walls = []; // Array to keep track of the wall bodies

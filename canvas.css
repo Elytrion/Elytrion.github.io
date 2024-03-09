@@ -1,11 +1,26 @@
 body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 canvas {
     width: 100vw;
     height: 100vh;
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#title {
+    position: absolute;
+    top: 20px; /* Adjust this value to change the distance from the top */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100; /* Ensures the title is above the canvas */
+    
+    font-size: 24px; /* Adjust the font size as needed */
+    color: #fff; /* Change the color to suit your design */
+    text-align: center;
 }

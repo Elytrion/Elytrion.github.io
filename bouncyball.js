@@ -28,19 +28,23 @@ var render = Render.create({
 // var boxA = Bodies.rectangle(400, 200, 80, 80);
 // var boxB = Bodies.rectangle(450, 50, 80, 80);
 
-for (let i = 0; i < 10; i++) {
+function createCircles()
+{
+    for (let i = 0; i < 10; i++) {
 
-    // get the center top of the canvas
-    let centerX = matterContainer.clientWidth / 2 - 10;
-    let centerY = 0;
+        // get the center top of the canvas
+        let centerX = matterContainer.clientWidth / 2 - 10;
+        let centerY = 0;
 
-  let circle = Bodies.circle(centerX + i, centerY, 30, {
-    friction: 0.3,
-    frictionAir: 0.0001,
-    restitution: 0.8
-  });
-  Composite.add(engine.world, circle);
+    let circle = Bodies.circle(centerX + i, centerY, 30, {
+        friction: 0.3,
+        frictionAir: 0.0001,
+        restitution: 0.8
+    });
+    Composite.add(engine.world, circle);
+    }
 }
+createCircles();
 
 var ground = Bodies.rectangle(
   matterContainer.clientWidth / 2,
@@ -126,5 +130,15 @@ function handleResize(matterContainer) {
     )
   );
 }
+
+
+// if space is pressed, create new circles
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    // clear old circles
+    Composite.clear(engine.world, false, true);
+    createCircles();
+  }
+});
 
 window.addEventListener("resize", () => handleResize(matterContainer));

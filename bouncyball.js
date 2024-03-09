@@ -43,7 +43,7 @@ createBall({ x: 100, y: 100 }, { x: 0, y: 0 });
 // Function to update the walls
 function updateWalls() {
     // Options for the walls; make them static and invisible
-    const wallOptions = { isStatic: true, render: { visible: false } };
+    const wallOptions = { isStatic: true, render: { visible: true } };
 
     // Remove existing walls
     walls.forEach(wall => {
@@ -102,6 +102,14 @@ window.addEventListener('resize', function() {
         min: { x: 0, y: 0 },
         max: { x: window.innerWidth, y: window.innerHeight }
     });
+   
+    // Update mouse bounds to match the new canvas size
+    mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+    mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
+    mouseConstraint.mouse.element = render.canvas;
+    mouseConstraint.mouse.offset = render.canvas.getBoundingClientRect();
+    Matter.Mouse.setScale(mouseConstraint.mouse, { x: (render.bounds.max.x - render.bounds.min.x) / render.canvas.width, y: (render.bounds.max.y - render.bounds.min.y) / render.canvas.height });
+    Matter.Mouse.setOffset(mouseConstraint.mouse, { x: render.canvas.getBoundingClientRect().left, y: render.canvas.getBoundingClientRect().top });
 });
 
 // Run the engine and renderer

@@ -1,4 +1,3 @@
-// script.js
 const { Engine, Render, Bodies, World, Mouse, MouseConstraint } = Matter;
 
 const engine = Engine.create();

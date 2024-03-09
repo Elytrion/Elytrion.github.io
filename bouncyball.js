@@ -55,11 +55,23 @@ updateWalls();
 
 // Update the walls on window resize
 window.addEventListener('resize', function() {
+
+    // Store the ball's position as a fraction of the current window size
+    const relativeX = circle.position.x / window.innerWidth;
+    const relativeY = circle.position.y / window.innerHeight;
+
     render.canvas.width = window.innerWidth;
     render.canvas.height = window.innerHeight;
 
     // Update the walls to match the new canvas size
     updateWalls();
+
+    // Calculate the new position based on the new window dimensions
+    const newX = relativeX * window.innerWidth;
+    const newY = relativeY * window.innerHeight;
+    
+    // Set the ball's position to the new calculated position
+    Matter.Body.setPosition(circle, { x: newX, y: newY });
 
     // Ensure the renderer considers the new dimensions
     Render.lookAt(render, {

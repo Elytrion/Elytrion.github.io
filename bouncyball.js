@@ -1,117 +1,125 @@
-const { Engine, Render, Bodies, World, Mouse, MouseConstraint, Body = Matter.Body } = Matter;
+const matterContainer = document.querySelector("#matter-container");
+const THICCNESS = 60;
 
+// module aliases
+var Engine = Matter.Engine,
+  Render = Matter.Render,
+  Runner = Matter.Runner,
+  Bodies = Matter.Bodies,
+  Composite = Matter.Composite;
 
-let walls = []; // Array to keep track of the wall bodies
-let ball; // The ball body
-const engine = Engine.create();
-const world = engine.world;
-const canvas = document.getElementById('canvas');
+// create an engine
+var engine = Engine.create();
 
-const render = Render.create({
-    canvas: canvas,
-    engine: engine,
-    options: {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        wireframes: false
-    }
+// create a renderer
+var render = Render.create({
+  element: matterContainer,
+  engine: engine,
+  options: {
+    width: matterContainer.clientWidth,
+    height: matterContainer.clientHeight,
+    background: "transparent",
+    wireframes: false,
+    showAngleIndicator: false
+  }
 });
 
-// Add mouse control
-const mouse = Mouse.create(render.canvas),
-      mouseConstraint = MouseConstraint.create(engine, { mouse: mouse });
-World.add(world, mouseConstraint);
+// create two boxes and a ground
+// var boxA = Bodies.rectangle(400, 200, 80, 80);
+// var boxB = Bodies.rectangle(450, 50, 80, 80);
 
-function createBall(scaledPosition, scaledVelocity) {
-    // Remove the existing ball if it exists
-    if (ball) {
-        World.remove(world, ball);
+for (let i = 0; i < 100; i++) {
+  let circle = Bodies.circle(i, 10, 30, {
+    friction: 0.3,
+    frictionAir: 0.00001,
+    restitution: 0.8
+  });
+  Composite.add(engine.world, circle);
+}
+
+var ground = Bodies.rectangle(
+  matterContainer.clientWidth / 2,
+  matterContainer.clientHeight + THICCNESS / 2,
+  27184,
+  THICCNESS,
+  { isStatic: true }
+);
+
+let leftWall = Bodies.rectangle(
+  0 - THICCNESS / 2,
+  matterContainer.clientHeight / 2,
+  THICCNESS,
+  matterContainer.clientHeight * 5,
+  {
+    isStatic: true
+  }
+);
+
+let rightWall = Bodies.rectangle(
+  matterContainer.clientWidth + THICCNESS / 2,
+  matterContainer.clientHeight / 2,
+  THICCNESS,
+  matterContainer.clientHeight * 5,
+  { isStatic: true }
+);
+
+// add all of the bodies to the world
+Composite.add(engine.world, [ground, leftWall, rightWall]);
+
+let mouse = Matter.Mouse.create(render.canvas);
+let mouseConstraint = Matter.MouseConstraint.create(engine, {
+  mouse: mouse,
+  constraint: {
+    stiffness: 0.2,
+    render: {
+      visible: false
     }
-
-    // Create a new ball with the same size but at the scaled position
-    // Assuming the initial position and velocity are stored or can be calculated
-    ball = Bodies.circle(scaledPosition.x, scaledPosition.y, 30, { restitution: 0.9 });
-    
-    // Set the velocity of the new ball to the scaled velocity
-    Body.setVelocity(ball, scaledVelocity);
-
-    // Add the new ball to the world
-    World.add(world, ball);
-}
-createBall({ x: 100, y: 100 }, { x: 0, y: 0 });
-
-// Function to update the walls
-function updateWalls() {
-    // Options for the walls; make them static and invisible
-    const wallOptions = { isStatic: true, render: { visible: true } };
-
-    // Remove existing walls
-    walls.forEach(wall => {
-        World.remove(world, wall);
-    });
-
-    // Clear the array after removing the walls from the world
-    walls = [];
-
-    // Define new walls with updated dimensions
-    const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 10, wallOptions);
-    const ceiling = Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 10, wallOptions);
-    const leftWall = Bodies.rectangle(0, window.innerHeight / 2, 10, window.innerHeight, wallOptions);
-    const rightWall = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 10, window.innerHeight, wallOptions);
-
-    // Add new walls to the world and the tracking array
-    walls.push(ground, ceiling, leftWall, rightWall);
-    World.add(world, walls);
-}
-
-// Initialize walls
-updateWalls();
-
-// Update the walls on window resize
-window.addEventListener('resize', function() {
-
-    // Store the ball's position as a fraction of the current window size
-    const relativeX = ball.position.x / window.innerWidth;
-    const relativeY = ball.position.y / window.innerHeight;
-    const relativeVelocityX = ball.velocity.x / window.innerWidth;
-    const relativeVelocityY = ball.velocity.y / window.innerHeight;
-
-    // render.canvas.width = window.innerWidth;
-    // render.canvas.height = window.innerHeight;
-
-    // Update the walls to match the new canvas size
-    updateWalls();
-
-    // Calculate the new position based on the new window dimensions
-    const newX = relativeX * window.innerWidth;
-    const newY = relativeY * window.innerHeight;
-
-    // Calculate the new velocity based on the new window dimensions
-    const newVelocityX = relativeVelocityX * window.innerWidth;
-    const newVelocityY = relativeVelocityY * window.innerHeight;
-
-    // This will depend on how you want to scale them relative to the new canvas size
-    let scaledPosition = { x: newX, y: newY };
-    let scaledVelocity = { x: newVelocityX, y: newVelocityY };
-    
-    // Remove the old ball and add a new one with the updated properties
-    createBall(scaledPosition, scaledVelocity);
-
-    // Ensure the renderer considers the new dimensions
-    // Render.lookAt(render, {
-    //     min: { x: 0, y: 0 },
-    //     max: { x: window.innerWidth, y: window.innerHeight }
-    // });
-   
-    // Update mouse bounds to match the new canvas size
-    mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
-    mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
-    mouseConstraint.mouse.element = render.canvas;
-    mouseConstraint.mouse.offset = render.canvas.getBoundingClientRect();
-    Matter.Mouse.setScale(mouseConstraint.mouse, { x: (render.bounds.max.x - render.bounds.min.x) / render.canvas.width, y: (render.bounds.max.y - render.bounds.min.y) / render.canvas.height });
-    Matter.Mouse.setOffset(mouseConstraint.mouse, { x: render.canvas.getBoundingClientRect().left, y: render.canvas.getBoundingClientRect().top });
+  }
 });
 
-// Run the engine and renderer
-Engine.run(engine);
+Composite.add(engine.world, mouseConstraint);
+
+// allow scroll through the canvas
+mouseConstraint.mouse.element.removeEventListener(
+  "mousewheel",
+  mouseConstraint.mouse.mousewheel
+);
+mouseConstraint.mouse.element.removeEventListener(
+  "DOMMouseScroll",
+  mouseConstraint.mouse.mousewheel
+);
+
+// run the renderer
 Render.run(render);
+
+// create runner
+var runner = Runner.create();
+
+// run the engine
+Runner.run(runner, engine);
+
+function handleResize(matterContainer) {
+  // set canvas size to new values
+  render.canvas.width = matterContainer.clientWidth;
+  render.canvas.height = matterContainer.clientHeight;
+
+  // reposition ground
+  Matter.Body.setPosition(
+    ground,
+    Matter.Vector.create(
+      matterContainer.clientWidth / 2,
+      matterContainer.clientHeight + THICCNESS / 2
+    )
+  );
+
+  // reposition right wall
+  Matter.Body.setPosition(
+    rightWall,
+    Matter.Vector.create(
+      matterContainer.clientWidth + THICCNESS / 2,
+      matterContainer.clientHeight / 2
+    )
+  );
+}
+
+window.addEventListener("resize", () => handleResize(matterContainer));

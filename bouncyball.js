@@ -24,32 +24,6 @@ var render = Render.create({
   }
 });
 
-var textBody = Bodies.rectangle(matterContainer.clientWidth / 2, 100, 200, 60, {
-    isStatic: true, // Start as static
-    render: {
-      fillStyle: '#106B21', // Optional: style for the body
-    }
-  });
-  Composite.add(engine.world, textBody);
-
-  Matter.Events.on(render, 'afterRender', function() {
-    var ctx = render.context;
-    ctx.font = '20px Arial';
-    ctx.fillStyle = 'white';
-    ctx.textAlign = 'center';
-    ctx.fillText('Click Me!', textBody.position.x, textBody.position.y + 10); // Adjust the y offset as needed
-  });
-
-  render.canvas.addEventListener('mousedown', function(event) {
-    var mousePosition = { x: event.clientX, y: event.clientY };
-    var bodiesUnderMouse = Matter.Query.point([textBody], mousePosition);
-  
-    if (bodiesUnderMouse.length > 0) {
-      // Toggle the isStatic property
-      Matter.Body.setStatic(bodiesUnderMouse[0], false);
-    }
-  });
-
 // create two boxes and a ground
 // var boxA = Bodies.rectangle(400, 200, 80, 80);
 // var boxB = Bodies.rectangle(450, 50, 80, 80);

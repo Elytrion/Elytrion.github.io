@@ -1,5 +1,13 @@
-.matter-container {
-    overflow: hidden;
+body, html {
+    margin: 0;
+    padding: 0;
     width: 100%;
-    height: 100vh;
-  }
+    height: 100%;
+    overflow: hidden; /* Optional: Prevent scrolling if the canvas is meant to fill the screen */
+}
+
+#matter-container {
+    width: 100%;
+    height: 100%;
+    position: relative; /* Ensures the container can properly contain the absolutely positioned canvas */
+}

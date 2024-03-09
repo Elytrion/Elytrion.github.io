@@ -1,5 +1,7 @@
-const { Engine, Render, Bodies, World, Mouse, MouseConstraint, Composite } = Matter;
+const { Engine, Render, Bodies, World, Mouse, MouseConstraint } = Matter;
 
+
+let walls = []; // Array to keep track of the wall bodies
 const engine = Engine.create();
 const world = engine.world;
 const canvas = document.getElementById('canvas');
@@ -30,15 +32,21 @@ function updateWalls() {
     const wallOptions = { isStatic: true, render: { visible: false } };
 
     // Remove existing walls
-    Composite.remove(world, Composite.allBodies(world).filter(body => body.label === 'Wall'));
+    walls.forEach(wall => {
+        World.remove(world, wall);
+    });
 
-    // Add new walls with updated dimensions
-    const walls = [
-        Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 10, { ...wallOptions, label: 'Wall' }),
-        Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 10, { ...wallOptions, label: 'Wall' }),
-        Bodies.rectangle(0, window.innerHeight / 2, 10, window.innerHeight, { ...wallOptions, label: 'Wall' }),
-        Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 10, window.innerHeight, { ...wallOptions, label: 'Wall' })
-    ];
+    // Clear the array after removing the walls from the world
+    walls = [];
+
+    // Define new walls with updated dimensions
+    const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 10, wallOptions);
+    const ceiling = Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 10, wallOptions);
+    const leftWall = Bodies.rectangle(0, window.innerHeight / 2, 10, window.innerHeight, wallOptions);
+    const rightWall = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 10, window.innerHeight, wallOptions);
+
+    // Add new walls to the world and the tracking array
+    walls.push(ground, ceiling, leftWall, rightWall);
     World.add(world, walls);
 }
 

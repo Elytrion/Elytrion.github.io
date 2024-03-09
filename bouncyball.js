@@ -1,4 +1,4 @@
-const { Engine, Render, Bodies, World, Mouse, MouseConstraint } = Matter;
+const { Engine, Render, Bodies, World, Mouse, MouseConstraint, Body } = Matter;
 
 
 let walls = []; // Array to keep track of the wall bodies
@@ -31,7 +31,7 @@ function createBall(scaledPosition, scaledVelocity) {
     // Create a new ball with the same size but at the scaled position
     // Assuming the initial position and velocity are stored or can be calculated
     ball = Bodies.circle(scaledPosition.x, scaledPosition.y, 30, { restitution: 0.9 });
-
+    
     // Set the velocity of the new ball to the scaled velocity
     Body.setVelocity(ball, scaledVelocity);
 

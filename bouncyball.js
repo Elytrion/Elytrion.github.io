@@ -29,9 +29,14 @@ var render = Render.create({
 // var boxB = Bodies.rectangle(450, 50, 80, 80);
 
 for (let i = 0; i < 10; i++) {
-  let circle = Bodies.circle(i, 10, 30, {
+
+    // get the center top of the canvas
+    let centerX = matterContainer.clientWidth / 2 - 10;
+    let centerY = 0;
+
+  let circle = Bodies.circle(centerX + i, centerY, 30, {
     friction: 0.3,
-    frictionAir: 0.00001,
+    frictionAir: 0.0001,
     restitution: 0.8
   });
   Composite.add(engine.world, circle);
